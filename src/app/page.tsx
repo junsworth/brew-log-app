@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Button } from "@/components/ui/button"
 
 const basePath = process.env.NODE_ENV === 'production' ? '/brew-log-app' : '';
 
@@ -60,6 +61,9 @@ export default function Home() {
           >
             Documentation
           </a>
+        </div>
+        <div className="flex min-h-svh items-center justify-center">
+          <Button>Click me</Button>
         </div>
       </main>
     </div>
