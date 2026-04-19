@@ -28,6 +28,8 @@ jobs:
 
       - name: Export static site
         run: pnpm run export
+        env:
+          NODE_ENV: production
 
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
