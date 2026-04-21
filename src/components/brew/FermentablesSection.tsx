@@ -26,7 +26,7 @@ export function FermentablesSection({
       columns={COLUMNS}
       onCreate={createEmptyFermentable}
       onChange={onChange}
-      minRows={1}
+      minRows={0}
     />
   );
 }

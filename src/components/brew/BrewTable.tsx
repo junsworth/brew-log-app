@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { Plus, Trash2 } from "lucide-react";
 
 export type ColumnDef<T> = {
@@ -27,6 +28,8 @@ interface Props<T extends { id: string }> {
   onChange: (rows: T[]) => void;
   minRows?: number;
 }
+
+const ACTION_COL_PX = 44;
 
 export function BrewTable<T extends { id: string }>({
   rows,
@@ -47,20 +50,29 @@ export function BrewTable<T extends { id: string }>({
 
   return (
     <div className="space-y-2">
-      <div className="overflow-x-auto rounded-md border border-border touch-pan-x">
-        <table className="min-w-max w-full text-xs">
+      <div className="overflow-x-auto rounded-md border border-border [-ms-overflow-style:none] [scrollbar-gutter:stable]">
+        <table className="w-full min-w-[640px] table-fixed border-collapse text-xs sm:min-w-0">
+          <colgroup>
+            {columns.map((col) => (
+              <col key={String(col.key)} style={col.width ? { width: col.width } : undefined} />
+            ))}
+            <col style={{ width: ACTION_COL_PX }} />
+          </colgroup>
           <thead>
             <tr className="bg-muted/70">
               {columns.map((col) => (
                 <th
                   key={String(col.key)}
-                  className="sticky top-0 bg-muted/90 px-2 py-2 text-left font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap"
-                  style={{ width: col.width }}
+                  className="border-b border-border/60 px-2 py-2 text-left text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground"
                 >
-                  {col.header}
+                  <span className="line-clamp-2 break-words">{col.header}</span>
                 </th>
               ))}
-              <th className="sticky top-0 w-10 bg-muted/90 px-2" />
+              <th
+                className="border-b border-border/60 px-0 py-2 text-center align-middle"
+                style={{ width: ACTION_COL_PX }}
+                aria-label="Row actions"
+              />
             </tr>
           </thead>
           <tbody>
@@ -72,14 +84,14 @@ export function BrewTable<T extends { id: string }>({
                 {columns.map((col) => (
                   <td
                     key={String(col.key)}
-                    className="border-x border-border/40 px-1 py-0.5"
+                    className="min-w-0 border-x border-border/40 px-1 py-0.5 align-middle"
                   >
                     {col.type === "select" ? (
                       <Select
                         value={String(row[col.key] ?? "")}
                         onValueChange={(v) => updateCell(row.id, col.key, v)}
                       >
-                        <SelectTrigger className="h-8 border-none bg-transparent px-1 text-xs shadow-none sm:h-7">
+                        <SelectTrigger className="h-8 min-w-0 w-full max-w-full border-none bg-transparent px-1 text-xs shadow-none sm:h-7">
                           <SelectValue placeholder="-" />
                           <SelectContent>
                             {col.options?.map((opt) => (
@@ -92,7 +104,7 @@ export function BrewTable<T extends { id: string }>({
                       </Select>
                     ) : (
                       <Input
-                        className="h-8 border-none bg-transparent px-1 text-xs shadow-none focus-visible:ring-0 sm:h-7"
+                        className="h-8 min-w-0 w-full border-none bg-transparent px-1 text-xs shadow-none focus-visible:ring-0 sm:h-7"
                         type={col.type === "number" ? "number" : "text"}
                         placeholder={col.placeholder ?? ""}
                         value={String(row[col.key] ?? "")}
@@ -109,11 +121,19 @@ export function BrewTable<T extends { id: string }>({
                     )}
                   </td>
                 ))}
-                <td className="px-1 py-0.5">
+                <td
+                  className={cn(
+                    "w-11 min-w-11 max-w-11 border-x border-border/40 px-0 py-0.5 text-center align-middle",
+                    idx % 2 === 0 ? "bg-background" : "bg-muted/20"
+                  )}
+                  style={{ width: ACTION_COL_PX }}
+                >
                   <Button
                     variant="ghost"
                     size="icon-sm"
                     className="text-muted-foreground hover:text-destructive"
+                    aria-label="Delete row"
+                    title="Delete row"
                     onClick={() => removeRow(row.id)}
                     disabled={rows.length <= minRows}
                   >
@@ -125,7 +145,9 @@ export function BrewTable<T extends { id: string }>({
           </tbody>
         </table>
       </div>
-      <p className="text-[11px] text-muted-foreground sm:hidden">Swipe table horizontally to see all columns.</p>
+      <p className="text-[11px] text-muted-foreground sm:hidden">
+        On small screens, scroll sideways to see every column. Delete is the last column.
+      </p>
       <Button variant="outline" size="sm" className="h-8 gap-1 text-xs sm:h-7" onClick={addRow}>
         <Plus className="h-3 w-3" />
         Add Row

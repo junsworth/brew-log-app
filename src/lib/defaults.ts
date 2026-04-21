@@ -84,7 +84,8 @@ export const createEmptyFermentationStep = (): FermentationStep => ({
 
 export const createDefaultBatchInfo = (): BatchInfo => ({
   batchNumber: "",
-  brewDate: new Date().toISOString().slice(0, 10),
+  // Empty on first paint so SSR and client hydration match; set today's date after mount in the hook.
+  brewDate: "",
   recipeName: "",
   style: "",
   brewer: "",

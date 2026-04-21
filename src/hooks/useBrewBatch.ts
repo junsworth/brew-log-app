@@ -15,17 +15,6 @@ const AUTOSAVE_DELAY_MS = 500;
 
 export function useBrewBatch() {
   const storage = useMemo(() => new LocalStorageAdapter(STORAGE_KEY), []);
-  const [batch, setBatch] = useState<BrewBatch>(() => storage.load() ?? createDefaultBrewBatch());
-  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      storage.save(batch);
-      setLastSavedAt(new Date());
-    }, AUTOSAVE_DELAY_MS);
-
-    return () => window.clearTimeout(timeout);
-  }, [batch, storage]);
 
   const applyDerivedStats = useCallback((current: BrewBatch): BrewBatch => {
     const measuredAbv = calculateAbv(
@@ -56,13 +45,58 @@ export function useBrewBatch() {
     };
   }, []);
 
-  const updateBatch = useCallback((updater: (prev: BrewBatch) => BrewBatch) => {
-    setBatch((prev) => applyDerivedStats(updater(prev)));
-  }, [applyDerivedStats]);
+  // Never read localStorage in the initial state: server HTML and the client's first hydration pass must match.
+  const [batch, setBatch] = useState<BrewBatch>(() => createDefaultBrewBatch());
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      const loaded = storage.load();
+      if (loaded) {
+        setBatch(applyDerivedStats(loaded));
+        return;
+      }
+      setBatch((prev) =>
+        applyDerivedStats({
+          ...prev,
+          batchInfo: {
+            ...prev.batchInfo,
+            brewDate:
+              prev.batchInfo.brewDate ||
+              new Date().toISOString().slice(0, 10),
+          },
+        })
+      );
+    });
+  }, [storage, applyDerivedStats]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      storage.save(batch);
+      setLastSavedAt(new Date());
+    }, AUTOSAVE_DELAY_MS);
+
+    return () => window.clearTimeout(timeout);
+  }, [batch, storage]);
+
+  const updateBatch = useCallback(
+    (updater: (prev: BrewBatch) => BrewBatch) => {
+      setBatch((prev) => applyDerivedStats(updater(prev)));
+    },
+    [applyDerivedStats]
+  );
 
   const reset = useCallback(() => {
     const fresh = createDefaultBrewBatch();
-    setBatch(applyDerivedStats(fresh));
+    setBatch(
+      applyDerivedStats({
+        ...fresh,
+        batchInfo: {
+          ...fresh.batchInfo,
+          brewDate: new Date().toISOString().slice(0, 10),
+        },
+      })
+    );
     storage.clear();
   }, [storage, applyDerivedStats]);
 
@@ -79,22 +113,25 @@ export function useBrewBatch() {
     URL.revokeObjectURL(url);
   }, [batch]);
 
-  const importJson = useCallback((file: File) => {
-    return new Promise<void>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(String(reader.result)) as BrewBatch;
-          setBatch(applyDerivedStats(parsed));
-          resolve();
-        } catch {
-          reject(new Error("Invalid import file"));
-        }
-      };
-      reader.onerror = () => reject(new Error("Could not read file"));
-      reader.readAsText(file);
-    });
-  }, [applyDerivedStats]);
+  const importJson = useCallback(
+    (file: File) => {
+      return new Promise<void>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(String(reader.result)) as BrewBatch;
+            setBatch(applyDerivedStats(parsed));
+            resolve();
+          } catch {
+            reject(new Error("Invalid import file"));
+          }
+        };
+        reader.onerror = () => reject(new Error("Could not read file"));
+        reader.readAsText(file);
+      });
+    },
+    [applyDerivedStats]
+  );
 
   return {
     batch,

@@ -31,7 +31,7 @@ export default function Home() {
             <div>
               <h1 className="text-xl font-bold tracking-tight sm:text-2xl">Brew Day Batch Record</h1>
               <p className="text-sm text-muted-foreground">
-                Next.js + shadcn/ui architecture with autosave, import/export, and reusable sections.
+                A tool to help you track your brew day batch record.
               </p>
             </div>
             <Badge className="border-amber-500/40 bg-amber-500/10 text-amber-700">{lastSavedLabel}</Badge>
