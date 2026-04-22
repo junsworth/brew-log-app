@@ -58,8 +58,18 @@ function SelectItem({ value, children }: { value: string; children: React.ReactN
   return <option value={value}>{children}</option>;
 }
 
+function SelectOptGroup({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return <optgroup label={label}>{children}</optgroup>;
+}
+
 function SelectValue({ placeholder }: { placeholder?: string }) {
   return placeholder ? <option value="">{placeholder}</option> : null;
 }
 
-export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue };
+export { Select, SelectContent, SelectItem, SelectOptGroup, SelectTrigger, SelectValue };

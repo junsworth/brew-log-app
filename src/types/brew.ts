@@ -29,8 +29,12 @@ export interface GravityStats {
 
 export interface Fermentable {
   id: string;
+  /** Supplier catalog id, empty = not chosen yet, "__custom__" = manual grain name */
+  catalogProductId: string;
   ingredient: string;
   maltType: string;
+  /** Typical colour in EBC (supplier / lab specs); editable when custom */
+  typicalEbc: string;
   amount: NumericInput;
   percentOfBill: NumericInput;
   lotNumber: string;
@@ -39,6 +43,7 @@ export interface Fermentable {
 
 export interface HopAddition {
   id: string;
+  catalogProductId: string;
   variety: string;
   form: string;
   alphaPercent: NumericInput;
@@ -50,6 +55,7 @@ export interface HopAddition {
 
 export interface Yeast {
   id: string;
+  catalogProductId: string;
   strainName: string;
   labBrand: string;
   form: string;

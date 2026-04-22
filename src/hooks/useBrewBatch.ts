@@ -7,6 +7,7 @@ import {
   calculateApparentAttenuation,
 } from "@/lib/calculations/brewing";
 import { createDefaultBrewBatch } from "@/lib/defaults";
+import { normalizeBrewBatch } from "@/lib/normalizeBrewBatch";
 import { LocalStorageAdapter } from "@/lib/storage/adapter";
 import type { BrewBatch } from "@/types/brew";
 
@@ -53,7 +54,7 @@ export function useBrewBatch() {
     queueMicrotask(() => {
       const loaded = storage.load();
       if (loaded) {
-        setBatch(applyDerivedStats(loaded));
+        setBatch(applyDerivedStats(normalizeBrewBatch(loaded)));
         return;
       }
       setBatch((prev) =>
@@ -120,7 +121,7 @@ export function useBrewBatch() {
         reader.onload = () => {
           try {
             const parsed = JSON.parse(String(reader.result)) as BrewBatch;
-            setBatch(applyDerivedStats(parsed));
+            setBatch(applyDerivedStats(normalizeBrewBatch(parsed)));
             resolve();
           } catch {
             reject(new Error("Invalid import file"));

@@ -22,8 +22,10 @@ function createId() {
 
 export const createEmptyFermentable = (): Fermentable => ({
   id: createId(),
+  catalogProductId: "",
   ingredient: "",
   maltType: "",
+  typicalEbc: "",
   amount: "",
   percentOfBill: "",
   lotNumber: "",
@@ -32,6 +34,7 @@ export const createEmptyFermentable = (): Fermentable => ({
 
 export const createEmptyHop = (): HopAddition => ({
   id: createId(),
+  catalogProductId: "",
   variety: "",
   form: "",
   alphaPercent: "",
@@ -43,6 +46,7 @@ export const createEmptyHop = (): HopAddition => ({
 
 export const createEmptyYeast = (): Yeast => ({
   id: createId(),
+  catalogProductId: "",
   strainName: "",
   labBrand: "",
   form: "",
