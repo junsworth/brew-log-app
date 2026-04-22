@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { BatchInfoSection } from "@/components/brew/BatchInfoSection";
+import { BatchHeader } from "@/components/brew/BatchHeader";
 import { BoilSection, FermentationSection, PackagingSection } from "@/components/brew/BoilFermentationPackaging";
 import { FermentablesSection } from "@/components/brew/FermentablesSection";
 import { GravityStatsSection } from "@/components/brew/GravityStatsSection";
@@ -10,15 +10,13 @@ import { MashSection, WaterProfileSection } from "@/components/brew/MashSection"
 import { MiscAdditionsSection } from "@/components/brew/MiscAdditionsSection";
 import { SectionCard } from "@/components/brew/SectionCard";
 import { YeastSection } from "@/components/brew/YeastSection";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useBrewBatch } from "@/hooks/useBrewBatch";
+import { useState } from "react";
 
 export default function Home() {
   const { batch, setBatch, lastSavedAt, exportJson, importJson, reset } = useBrewBatch();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
 
   const lastSavedLabel = lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString()}` : "Autosave enabled";
@@ -26,62 +24,14 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-muted/20 pb-24 sm:pb-6">
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-4 sm:px-4 sm:py-6 md:px-6">
-        <header className="rounded-xl border bg-card p-3 shadow-sm sm:p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h1 className="text-xl font-bold tracking-tight sm:text-2xl">Brew Day Batch Record</h1>
-              <p className="text-sm text-muted-foreground">
-                A tool to help you track your brew day batch record.
-              </p>
-            </div>
-            <Badge className="border-amber-500/40 bg-amber-500/10 text-amber-700">{lastSavedLabel}</Badge>
-          </div>
-          <div className="mt-3 hidden gap-2 sm:flex sm:flex-wrap">
-            <Button className="w-full sm:w-auto" variant="secondary" onClick={exportJson}>
-              Export JSON
-            </Button>
-            <Button className="w-full sm:w-auto" variant="outline" onClick={() => fileInputRef.current?.click()}>
-              Import JSON
-            </Button>
-            <Button className="w-full sm:w-auto" variant="destructive" onClick={reset}>
-              Clear Form
-            </Button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              className="hidden"
-              onChange={async (event) => {
-                const file = event.target.files?.[0];
-                if (!file) return;
-                try {
-                  await importJson(file);
-                  setImportError(null);
-                } catch {
-                  setImportError("Could not import file. Please use a valid Brew Batch JSON export.");
-                } finally {
-                  event.target.value = "";
-                }
-              }}
-            />
-            {importError ? <p className="self-center text-xs text-destructive">{importError}</p> : null}
-          </div>
-        </header>
-
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 p-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:hidden">
-          <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2">
-            <Button size="sm" variant="secondary" onClick={exportJson}>
-              Export
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
-              Import
-            </Button>
-            <Button size="sm" variant="destructive" onClick={reset}>
-              Clear
-            </Button>
-          </div>
-          {importError ? <p className="mt-1 text-center text-xs text-destructive">{importError}</p> : null}
-        </div>
+        <BatchHeader
+          lastSavedLabel={lastSavedLabel}
+          importError={importError}
+          onExport={exportJson}
+          onReset={reset}
+          onImportFile={importJson}
+          onImportError={setImportError}
+        />
 
         <Tabs defaultValue="page1" className="space-y-4">
           <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2">
