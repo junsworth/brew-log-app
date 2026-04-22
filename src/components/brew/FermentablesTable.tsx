@@ -41,8 +41,43 @@ export function FermentablesTable({
   const grouped = useMemo(() => groupJolaMalts(), []);
   const groups = useMemo(() => Object.entries(grouped), [grouped]);
 
+  const withCalculatedPercent = (nextRows: Fermentable[]) => {
+    const totalAmount = nextRows.reduce(
+      (sum, row) => sum + (typeof row.amount === "number" && Number.isFinite(row.amount) ? row.amount : 0),
+      0
+    );
+
+    if (totalAmount <= 0) {
+      return nextRows.map<Fermentable>((row) => ({ ...row, percentOfBill: "" }));
+    }
+
+    const rowsWithAmount = nextRows
+      .map((row, index) => ({ row, index }))
+      .filter(({ row }) => typeof row.amount === "number" && Number.isFinite(row.amount) && row.amount > 0);
+
+    const roundedPercents = rowsWithAmount.map(({ row, index }) => ({
+      index,
+      rounded: Number((((row.amount as number) / totalAmount) * 100).toFixed(2)),
+    }));
+
+    const roundedSum = roundedPercents.reduce((sum, item) => sum + item.rounded, 0);
+    const drift = Number((100 - roundedSum).toFixed(2));
+
+    if (roundedPercents.length > 0 && drift !== 0) {
+      const last = roundedPercents[roundedPercents.length - 1];
+      last.rounded = Number((last.rounded + drift).toFixed(2));
+    }
+
+    const percentByIndex = new Map(roundedPercents.map((item) => [item.index, item.rounded]));
+
+    return nextRows.map<Fermentable>((row, index) => ({
+      ...row,
+      percentOfBill: percentByIndex.get(index) ?? "",
+    }));
+  };
+
   const updateRow = (id: string, patch: Partial<Fermentable>) =>
-    onChange(rows.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+    onChange(withCalculatedPercent(rows.map((r) => (r.id === id ? { ...r, ...patch } : r))));
 
   const onCatalogChange = (rowId: string, value: string) => {
     if (value === "" || value === JOLA_CUSTOM_PRODUCT_ID) {
@@ -74,11 +109,11 @@ export function FermentablesTable({
     });
   };
 
-  const addRow = () => onChange([...rows, createEmptyFermentable()]);
+  const addRow = () => onChange(withCalculatedPercent([...rows, createEmptyFermentable()]));
 
   const removeRow = (id: string) => {
     if (rows.length <= minRows) return;
-    onChange(rows.filter((r) => r.id !== id));
+    onChange(withCalculatedPercent(rows.filter((r) => r.id !== id)));
   };
 
   const isCustom = (row: Fermentable) => row.catalogProductId === JOLA_CUSTOM_PRODUCT_ID;
@@ -87,10 +122,11 @@ export function FermentablesTable({
     <div className="space-y-2">
       <p className="text-[11px] text-muted-foreground sm:text-xs">
         Grain bill uses your Jola supplier catalog (Maltes / Lupulos / Leveduras PDF). Pick a catalog malt
-        (EBC auto-filled from supplier list) or choose Custom. Type and EBC stay editable.
+        (EBC auto-filled from supplier list) or choose Custom. Type and EBC stay editable. `% bill` is
+        auto-calculated from kg amounts.
       </p>
       <div className="overflow-x-auto rounded-md border border-border">
-        <table className="w-full min-w-[720px] table-fixed border-collapse text-xs sm:min-w-0">
+        <table className="w-full min-w-[640px] table-fixed border-collapse text-xs sm:min-w-0">
           <colgroup>
             <col style={{ width: "20%" }} />
             <col style={{ width: "15%" }} />
@@ -98,8 +134,7 @@ export function FermentablesTable({
             <col style={{ width: "8%" }} />
             <col style={{ width: "8%" }} />
             <col style={{ width: "7%" }} />
-            <col style={{ width: "7%" }} />
-            <col style={{ width: "14%" }} />
+            <col style={{ width: "21%" }} />
             <col style={{ width: ACTION_COL_PX }} />
           </colgroup>
           <thead>
@@ -124,9 +159,6 @@ export function FermentablesTable({
               </th>
               <th className="border-b border-border/60 px-2 py-2 text-left text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">
                 % bill
-              </th>
-              <th className="border-b border-border/60 px-2 py-2 text-left text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">
-                Lot #
               </th>
               <th className="border-b border-border/60 px-2 py-2 text-left text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">
                 Notes
@@ -204,22 +236,9 @@ export function FermentablesTable({
                 <td className="min-w-0 border-x border-border/40 px-1 py-0.5 align-middle">
                   <Input
                     className="h-8 min-w-0 w-full border-none bg-transparent px-1 text-xs shadow-none focus-visible:ring-0 sm:h-7"
-                    type="number"
-                    placeholder="0"
+                    placeholder="auto"
                     value={row.percentOfBill}
-                    onChange={(e) =>
-                      updateRow(row.id, {
-                        percentOfBill: e.target.value === "" ? "" : Number(e.target.value),
-                      })
-                    }
-                  />
-                </td>
-                <td className="min-w-0 border-x border-border/40 px-1 py-0.5 align-middle">
-                  <Input
-                    className="h-8 min-w-0 w-full border-none bg-transparent px-1 text-xs shadow-none focus-visible:ring-0 sm:h-7"
-                    placeholder="—"
-                    value={row.lotNumber}
-                    onChange={(e) => updateRow(row.id, { lotNumber: e.target.value })}
+                    readOnly
                   />
                 </td>
                 <td className="min-w-0 border-x border-border/40 px-1 py-0.5 align-middle">
