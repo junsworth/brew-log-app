@@ -1,6 +1,6 @@
 "use client";
 
-import { BJCP_STYLES, RECIPE_TYPES } from "@/constants/brewing";
+import { BJCP_BEER_STYLES, RECIPE_TYPES } from "@/constants/brewing";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -27,7 +27,7 @@ export function BatchInfoSection({ data, onChange }: Props) {
           <SelectTrigger>
             <SelectValue placeholder="Select style..." />
             <SelectContent>
-              {BJCP_STYLES.map((style) => (
+              {BJCP_BEER_STYLES.map((style) => (
                 <SelectItem key={style} value={style}>
                   {style}
                 </SelectItem>
