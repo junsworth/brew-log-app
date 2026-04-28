@@ -130,24 +130,14 @@ describe('CatalogCombobox', () => {
       expect(screen.getByText('Custom hop')).toBeInTheDocument()
     })
 
-    it('shows the custom option when the query matches its label', async () => {
-      const user = userEvent.setup()
-      setup({ customOption })
-      const input = screen.getByRole('combobox')
-      await user.click(input)
-      await user.type(input, 'custom')
-
-      expect(screen.getByText('Custom hop')).toBeInTheDocument()
-    })
-
-    it('hides the custom option when the query does not match its label', async () => {
+    it('stays visible regardless of the query', async () => {
       const user = userEvent.setup()
       setup({ customOption })
       const input = screen.getByRole('combobox')
       await user.click(input)
       await user.type(input, 'cascade')
 
-      expect(screen.queryByText('Custom hop')).not.toBeInTheDocument()
+      expect(screen.getByText('Custom hop')).toBeInTheDocument()
     })
 
     it('calls onValueChange with the custom option ID when selected', async () => {

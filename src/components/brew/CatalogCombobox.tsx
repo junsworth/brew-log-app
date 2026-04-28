@@ -52,11 +52,7 @@ export function CatalogCombobox({
       .filter((g) => g.items.length > 0)
   }, [groups, query])
 
-  const showCustom =
-    !query.trim() ||
-    Boolean(customOption?.label.toLowerCase().includes(query.toLowerCase()))
-
-  const hasResults = filteredGroups.length > 0 || (Boolean(customOption) && showCustom)
+  const hasResults = filteredGroups.length > 0 || Boolean(customOption)
 
   function handleChange(item: ItemShape | null) {
     onValueChange(item?.value ?? "")
@@ -88,7 +84,7 @@ export function CatalogCombobox({
               ))}
             </ComboboxGroup>
           ))}
-          {customOption && showCustom && (
+          {customOption && (
             <>
               <ComboboxSeparator />
               <ComboboxItem value={customOption}>
