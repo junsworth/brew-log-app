@@ -37,6 +37,7 @@ Path alias: `@/` → `src/`
 
 ## Design system
 - shadcn/ui — https://ui.shadcn.com/
+- Mobile-first — design for small screens first; scale up for larger viewports
 
 ## Testing
 

@@ -7,10 +7,10 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectOptGroup,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CatalogCombobox } from "@/components/brew/CatalogCombobox";
 import { Plus, Trash2 } from "lucide-react";
 import { YEAST_FORMS } from "@/constants/brewing";
 import { JOLA_CUSTOM_PRODUCT_ID, JOLA_YEASTS, getJolaYeast } from "@/constants/jolaCatalog";
@@ -35,6 +35,10 @@ export function YeastSection({ rows, onChange }: { rows: Yeast[]; onChange: (row
     }, {});
   }, []);
   const groups = useMemo(() => Object.entries(groupedByBrand), [groupedByBrand]);
+  const comboboxGroups = useMemo(
+    () => groups.map(([label, yeasts]) => ({ label, items: yeasts.map((y) => ({ value: y.id, label: y.name })) })),
+    [groups]
+  );
 
   const updateRow = (id: string, patch: Partial<Yeast>) =>
     onChange(rows.map((r) => (r.id === id ? { ...r, ...patch } : r)));
@@ -101,23 +105,13 @@ export function YeastSection({ rows, onChange }: { rows: Yeast[]; onChange: (row
             {rows.map((row, idx) => (
               <tr key={row.id} className={idx % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                 <td className="border-x border-border/40 px-1 py-0.5">
-                  <Select value={catalogValue(row)} onValueChange={(v) => onCatalogChange(row.id, v)}>
-                    <SelectTrigger className="h-8 w-full border-none bg-transparent px-1 text-xs shadow-none sm:h-7">
-                      <SelectValue placeholder="Select yeast..." />
-                      <SelectContent>
-                        {groups.map(([brand, yeasts]) => (
-                          <SelectOptGroup key={brand} label={brand}>
-                            {yeasts.map((yeast) => (
-                              <SelectItem key={yeast.id} value={yeast.id}>
-                                {yeast.name}
-                              </SelectItem>
-                            ))}
-                          </SelectOptGroup>
-                        ))}
-                        <SelectItem value={JOLA_CUSTOM_PRODUCT_ID}>Custom yeast</SelectItem>
-                      </SelectContent>
-                    </SelectTrigger>
-                  </Select>
+                  <CatalogCombobox
+                    value={catalogValue(row)}
+                    onValueChange={(v) => onCatalogChange(row.id, v)}
+                    groups={comboboxGroups}
+                    customOption={{ value: JOLA_CUSTOM_PRODUCT_ID, label: "Custom yeast" }}
+                    placeholder="Select yeast..."
+                  />
                 </td>
                 <td className="border-x border-border/40 px-1 py-0.5">
                   <Input className="h-8 border-none bg-transparent px-1 text-xs shadow-none sm:h-7" value={row.labBrand} readOnly={!isCustom(row) && Boolean(row.catalogProductId)} onChange={(e) => updateRow(row.id, { labBrand: e.target.value })} />

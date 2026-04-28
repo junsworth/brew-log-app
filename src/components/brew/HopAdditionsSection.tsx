@@ -7,10 +7,10 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectOptGroup,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CatalogCombobox } from "@/components/brew/CatalogCombobox";
 import { Plus, Trash2 } from "lucide-react";
 import { HOP_FORMS, HOP_USES } from "@/constants/brewing";
 import { getJolaHop, groupJolaHopsByOrigin, JOLA_CUSTOM_PRODUCT_ID } from "@/constants/jolaCatalog";
@@ -33,6 +33,10 @@ export function HopAdditionsSection({
   onChange: (rows: HopAddition[]) => void;
 }) {
   const groups = useMemo(() => Object.entries(groupJolaHopsByOrigin()), []);
+  const comboboxGroups = useMemo(
+    () => groups.map(([label, hops]) => ({ label, items: hops.map((h) => ({ value: h.id, label: h.name })) })),
+    [groups]
+  );
   const updateRow = (id: string, patch: Partial<HopAddition>) =>
     onChange(rows.map((r) => (r.id === id ? { ...r, ...patch } : r)));
   const isCustom = (row: HopAddition) => row.catalogProductId === JOLA_CUSTOM_PRODUCT_ID;
@@ -93,23 +97,13 @@ export function HopAdditionsSection({
             {rows.map((row, idx) => (
               <tr key={row.id} className={idx % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                 <td className="border-x border-border/40 px-1 py-0.5">
-                  <Select value={catalogValue(row)} onValueChange={(v) => onCatalogChange(row.id, v)}>
-                    <SelectTrigger className="h-8 w-full border-none bg-transparent px-1 text-xs shadow-none sm:h-7">
-                      <SelectValue placeholder="Select hop..." />
-                      <SelectContent>
-                        {groups.map(([origin, hops]) => (
-                          <SelectOptGroup key={origin} label={origin}>
-                            {hops.map((hop) => (
-                              <SelectItem key={hop.id} value={hop.id}>
-                                {hop.name}
-                              </SelectItem>
-                            ))}
-                          </SelectOptGroup>
-                        ))}
-                        <SelectItem value={JOLA_CUSTOM_PRODUCT_ID}>Custom hop</SelectItem>
-                      </SelectContent>
-                    </SelectTrigger>
-                  </Select>
+                  <CatalogCombobox
+                    value={catalogValue(row)}
+                    onValueChange={(v) => onCatalogChange(row.id, v)}
+                    groups={comboboxGroups}
+                    customOption={{ value: JOLA_CUSTOM_PRODUCT_ID, label: "Custom hop" }}
+                    placeholder="Select hop..."
+                  />
                 </td>
                 <td className="border-x border-border/40 px-1 py-0.5">
                   <Select value={row.form} onValueChange={(v) => updateRow(row.id, { form: v })}>

@@ -4,14 +4,7 @@ import { useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectOptGroup,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { CatalogCombobox } from "@/components/brew/CatalogCombobox";
 import {
   getJolaMalt,
   groupJolaMalts,
@@ -40,6 +33,10 @@ export function FermentablesTable({
 }) {
   const grouped = useMemo(() => groupJolaMalts(), []);
   const groups = useMemo(() => Object.entries(grouped), [grouped]);
+  const comboboxGroups = useMemo(
+    () => groups.map(([label, malts]) => ({ label, items: malts.map((m) => ({ value: m.id, label: m.name })) })),
+    [groups]
+  );
 
   const withCalculatedPercent = (nextRows: Fermentable[]) => {
     const totalAmount = nextRows.reduce(
@@ -174,26 +171,13 @@ export function FermentablesTable({
             {rows.map((row, idx) => (
               <tr key={row.id} className={idx % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                 <td className="min-w-0 border-x border-border/40 px-1 py-0.5 align-middle">
-                  <Select
+                  <CatalogCombobox
                     value={catalogSelectValue(row)}
                     onValueChange={(v) => onCatalogChange(row.id, v)}
-                  >
-                    <SelectTrigger className="h-8 min-w-0 w-full max-w-full border-none bg-transparent px-1 text-[11px] shadow-none sm:h-7 sm:text-xs">
-                      <SelectValue placeholder="Select malt…" />
-                      <SelectContent>
-                        {groups.map(([groupName, malts]) => (
-                          <SelectOptGroup key={groupName} label={groupName}>
-                            {malts.map((m) => (
-                              <SelectItem key={m.id} value={m.id}>
-                                {m.name}
-                              </SelectItem>
-                            ))}
-                          </SelectOptGroup>
-                        ))}
-                        <SelectItem value={JOLA_CUSTOM_PRODUCT_ID}>Custom (other grain / fermentable)</SelectItem>
-                      </SelectContent>
-                    </SelectTrigger>
-                  </Select>
+                    groups={comboboxGroups}
+                    customOption={{ value: JOLA_CUSTOM_PRODUCT_ID, label: "Custom (other grain / fermentable)" }}
+                    placeholder="Select malt…"
+                  />
                 </td>
                 <td className="min-w-0 border-x border-border/40 px-1 py-0.5 align-middle">
                   <Input
