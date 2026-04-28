@@ -1,18 +1,5 @@
 export const RECIPE_TYPES = ["All Grain", "BIAB", "Extract", "Partial Mash"] as const;
 
-export const BJCP_STYLES = [
-  "18A Blonde Ale",
-  "18B American Pale Ale",
-  "19A American Amber Ale",
-  "21A American IPA",
-  "22A Double IPA",
-  "11A Ordinary Bitter",
-  "13B British Brown Ale",
-  "20A American Porter",
-  "20C Imperial Stout",
-  "27A Historical Beer",
-] as const;
-
 export const HOP_FORMS = ["Pellet", "Whole", "Cryo", "Extract"] as const;
 export const HOP_USES = ["Mash", "First Wort", "Boil", "Whirlpool", "Dry Hop"] as const;
 export const YEAST_FORMS = ["Dry", "Liquid", "Slurry"] as const;
@@ -165,8 +152,38 @@ export const BJCP_BEER_STYLES = [
   "33A. Wood-Aged Beer", 
   "33B. Specialty Wood-Aged Beer",
   "34. Specialty Beer", 
-  "34A. Commercial Specialty Beer", 
-  "34B. Mixed-Style Beer", 
+  "34A. Commercial Specialty Beer",
+  "34B. Mixed-Style Beer",
   "34C. Experimental Beer"
 ]
 
+/**
+ * Converts BJCP_BEER_STYLES into grouped form for CatalogCombobox.
+ * Category-header entries (e.g. "21. IPA") become non-selectable group labels;
+ * sub-style entries (e.g. "21A. American IPA") become selectable items.
+ * The one exception is "27. Historical Beer" which has no sub-styles and is
+ * kept as a selectable item inside its own group.
+ */
+export function bjcpStyleGroups(): { label: string; items: { value: string; label: string }[] }[] {
+  const groups: { label: string; items: { value: string; label: string }[] }[] = []
+
+  for (let i = 0; i < BJCP_BEER_STYLES.length; i++) {
+    const style = BJCP_BEER_STYLES[i]
+
+    if (/^\d+\. /.test(style)) {
+      // Category header — check whether sub-styles follow immediately
+      const hasSubStyles =
+        i + 1 < BJCP_BEER_STYLES.length && !/^\d+\. /.test(BJCP_BEER_STYLES[i + 1])
+      groups.push({
+        label: style,
+        // If no sub-styles, make the category itself selectable
+        items: hasSubStyles ? [] : [{ value: style, label: style }],
+      })
+    } else {
+      // Sub-style item — append to the most recent group
+      groups[groups.length - 1]?.items.push({ value: style, label: style })
+    }
+  }
+
+  return groups
+}

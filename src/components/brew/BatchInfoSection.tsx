@@ -1,9 +1,12 @@
 "use client";
 
-import { BJCP_BEER_STYLES, RECIPE_TYPES } from "@/constants/brewing";
+import { bjcpStyleGroups, RECIPE_TYPES } from "@/constants/brewing";
+import { CatalogCombobox } from "@/components/brew/CatalogCombobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const BJCP_GROUPS = bjcpStyleGroups()
 import type { BatchInfo } from "@/types/brew";
 
 interface Props {
@@ -23,18 +26,12 @@ export function BatchInfoSection({ data, onChange }: Props) {
       </div>
       <div className="space-y-1.5">
         <Label>Style (BJCP)</Label>
-        <Select value={data.style} onValueChange={(v) => set("style", v)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select style..." />
-            <SelectContent>
-              {BJCP_BEER_STYLES.map((style) => (
-                <SelectItem key={style} value={style}>
-                  {style}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectTrigger>
-        </Select>
+        <CatalogCombobox
+          value={data.style}
+          onValueChange={(v) => set("style", v)}
+          groups={BJCP_GROUPS}
+          placeholder="Search styles..."
+        />
       </div>
       <div className="space-y-1.5">
         <Label>Brewer</Label>
