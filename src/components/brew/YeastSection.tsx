@@ -75,7 +75,7 @@ export function YeastSection({ rows, onChange }: { rows: Yeast[]; onChange: (row
   return (
     <div className="space-y-2">
       <p className="text-[11px] text-muted-foreground sm:text-xs">
-        Yeast list uses your Jola supplier catalog. Choose a strain and it auto-fills brand/form/pack size, or select custom.
+        Yeast list uses your Jola supplier catalog. Choose a strain and it auto-fills brand/form/pack size.
       </p>
       <div className="overflow-x-auto rounded-md border border-border">
         <table className="w-full min-w-[780px] table-fixed border-collapse text-xs sm:min-w-0">
@@ -109,7 +109,6 @@ export function YeastSection({ rows, onChange }: { rows: Yeast[]; onChange: (row
                     value={catalogValue(row)}
                     onValueChange={(v) => onCatalogChange(row.id, v)}
                     groups={comboboxGroups}
-                    customOption={{ value: JOLA_CUSTOM_PRODUCT_ID, label: "Custom yeast" }}
                     placeholder="Select yeast..."
                   />
                 </td>

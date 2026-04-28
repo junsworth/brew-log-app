@@ -67,7 +67,7 @@ export function HopAdditionsSection({
   return (
     <div className="space-y-2">
       <p className="text-[11px] text-muted-foreground sm:text-xs">
-        Hops come from your Jola supplier catalog. Choose a hop (alpha % auto-fills when provided) or select custom.
+        Hops come from your Jola supplier catalog. Choose a hop (alpha % auto-fills when provided).
       </p>
       <div className="overflow-x-auto rounded-md border border-border">
         <table className="w-full min-w-[760px] table-fixed border-collapse text-xs sm:min-w-0">
@@ -101,7 +101,6 @@ export function HopAdditionsSection({
                     value={catalogValue(row)}
                     onValueChange={(v) => onCatalogChange(row.id, v)}
                     groups={comboboxGroups}
-                    customOption={{ value: JOLA_CUSTOM_PRODUCT_ID, label: "Custom hop" }}
                     placeholder="Select hop..."
                   />
                 </td>

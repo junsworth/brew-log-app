@@ -119,7 +119,7 @@ export function FermentablesTable({
     <div className="space-y-2">
       <p className="text-[11px] text-muted-foreground sm:text-xs">
         Grain bill uses your Jola supplier catalog (Maltes / Lupulos / Leveduras PDF). Pick a catalog malt
-        (EBC auto-filled from supplier list) or choose Custom. Type and EBC stay editable. `% bill` is
+        (EBC auto-filled from supplier list). Type and EBC stay editable. `% bill` is
         auto-calculated from kg amounts.
       </p>
       <div className="overflow-x-auto rounded-md border border-border">
@@ -175,7 +175,6 @@ export function FermentablesTable({
                     value={catalogSelectValue(row)}
                     onValueChange={(v) => onCatalogChange(row.id, v)}
                     groups={comboboxGroups}
-                    customOption={{ value: JOLA_CUSTOM_PRODUCT_ID, label: "Custom (other grain / fermentable)" }}
                     placeholder="Select malt…"
                   />
                 </td>
