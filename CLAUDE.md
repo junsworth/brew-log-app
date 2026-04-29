@@ -30,6 +30,20 @@ Path alias: `@/` → `src/`
 - No state manager (Redux, Zustand, Jotai, etc.) — `useState` + `useBrewBatch` is sufficient
 - Do not write shadcn components by hand — always use the CLI to add them
 
+## Adding dependencies
+
+**Before running `pnpm add` for any new package, perform the following checks and report findings. Do not install until explicitly approved.**
+
+1. **Already covered?** Check `package.json` for anything that already does the job. Check whether the standard library or a utility already in `src/lib/` is sufficient.
+2. **Maintenance** — npm weekly downloads, date of last publish, open issues/PRs. Flag packages with <10k weekly downloads or no publish in the last 12 months.
+3. **Bundle size** — check bundlephobia impact. Flag anything adding >50 kB gzipped as worth discussing.
+4. **Compatibility** — verify support for React 19 and Next.js. Note any peer-dependency warnings.
+5. **Security** — check for known CVEs via `npm audit` or the npm advisories page.
+6. **License** — MIT, Apache 2.0, or BSD only. Flag anything else for review.
+7. **Alternatives** — briefly name 1–2 alternatives considered and why this package was preferred.
+
+Present the report, then wait for explicit approval before installing.
+
 ## Code style
 - TypeScript strict mode
 - Single quotes, no semicolons

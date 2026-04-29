@@ -128,3 +128,20 @@
     @apply font-sans;
   }
 }
+
+/* ── Print styles ──────────────────────────────────────────────────────────── */
+@media print {
+  @page { size: A4; margin: 12mm 15mm; }
+
+  /* Hide the app UI; the CSS anchor #brew-print-view is made visible below */
+  body > * { display: none !important; }
+  #brew-print-view { display: block !important; }
+
+  /* Force background colours to print (section headers, alternating rows) */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Table page-break control */
+  table  { page-break-inside: auto; border-collapse: collapse; width: 100%; }
+  tr     { page-break-inside: avoid; }
+  thead  { display: table-header-group; }
+}

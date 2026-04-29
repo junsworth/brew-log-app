@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   // set assetPrefix so files reference /<repo>/_next/... instead of absolute root.
   assetPrefix: process.env.NODE_ENV === 'production' ? '/brew-log-app' : '',
   basePath: process.env.NODE_ENV === 'production' ? '/brew-log-app' : '',
+  allowedDevOrigins: ['192.168.1.187'],
 };
 
 export default nextConfig;

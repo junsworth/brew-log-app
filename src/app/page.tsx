@@ -2,6 +2,7 @@
 
 import { BatchInfoSection } from "@/components/brew/BatchInfoSection";
 import { BatchHeader } from "@/components/brew/BatchHeader";
+import { BrewBatchPrintView } from "@/components/brew/BrewBatchPrintView";
 import { BoilSection, FermentationSection, PackagingSection } from "@/components/brew/BoilFermentationPackaging";
 import { FermentablesSection } from "@/components/brew/FermentablesSection";
 import { GravityStatsSection } from "@/components/brew/GravityStatsSection";
@@ -22,7 +23,8 @@ export default function Home() {
   const lastSavedLabel = lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString()}` : "Autosave enabled";
 
   return (
-    <div className="min-h-screen bg-muted/20 pb-24 sm:pb-6">
+    <>
+    <div className="min-h-screen bg-muted/20 pb-24 print:hidden sm:pb-6">
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-4 sm:px-4 sm:py-6 md:px-6">
         <BatchHeader
           lastSavedLabel={lastSavedLabel}
@@ -110,5 +112,7 @@ export default function Home() {
         </Tabs>
       </main>
     </div>
+    <BrewBatchPrintView batch={batch} />
+    </>
   );
 }
