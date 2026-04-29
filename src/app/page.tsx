@@ -16,7 +16,7 @@ import { useBrewBatch } from "@/hooks/useBrewBatch";
 import { useState } from "react";
 
 export default function Home() {
-  const { batch, setBatch, lastSavedAt, exportJson, importJson, reset } = useBrewBatch();
+  const { batch, setBatch, lastSavedAt, exportJson, exportPdf, importJson, reset } = useBrewBatch();
   const [importError, setImportError] = useState<string | null>(null);
 
   const lastSavedLabel = lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString()}` : "Autosave enabled";
@@ -28,6 +28,7 @@ export default function Home() {
           lastSavedLabel={lastSavedLabel}
           importError={importError}
           onExport={exportJson}
+          onExportPdf={exportPdf}
           onReset={reset}
           onImportFile={importJson}
           onImportError={setImportError}

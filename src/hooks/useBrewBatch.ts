@@ -9,6 +9,7 @@ import {
 import { createDefaultBrewBatch } from "@/lib/defaults";
 import { normalizeBrewBatch } from "@/lib/normalizeBrewBatch";
 import { LocalStorageAdapter } from "@/lib/storage/adapter";
+import { generateBrewBatchPdf } from "@/lib/pdf/brewBatchPdf";
 import type { BrewBatch } from "@/types/brew";
 
 const STORAGE_KEY = "brew-day-record-v2";
@@ -101,6 +102,10 @@ export function useBrewBatch() {
     storage.clear();
   }, [storage, applyDerivedStats]);
 
+  const exportPdf = useCallback(() => {
+    generateBrewBatchPdf(batch)
+  }, [batch])
+
   const exportJson = useCallback(() => {
     const blob = new Blob([JSON.stringify(batch, null, 2)], {
       type: "application/json",
@@ -140,6 +145,7 @@ export function useBrewBatch() {
     lastSavedAt,
     reset,
     exportJson,
+    exportPdf,
     importJson,
   };
 }

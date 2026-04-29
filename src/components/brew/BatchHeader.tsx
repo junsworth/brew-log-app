@@ -9,6 +9,7 @@ type BatchHeaderProps = {
   lastSavedLabel: string;
   importError: string | null;
   onExport: () => void;
+  onExportPdf: () => void;
   onReset: () => void;
   onImportFile: (file: File) => Promise<void>;
   onImportError: (message: string | null) => void;
@@ -18,6 +19,7 @@ export function BatchHeader({
   lastSavedLabel,
   importError,
   onExport,
+  onExportPdf,
   onReset,
   onImportFile,
   onImportError,
@@ -41,6 +43,9 @@ export function BatchHeader({
             <Button className="w-full sm:w-auto" variant="secondary" onClick={onExport}>
               Export JSON
             </Button>
+            <Button className="w-full sm:w-auto" variant="secondary" onClick={onExportPdf}>
+              Export PDF
+            </Button>
             <Button className="w-full sm:w-auto" variant="outline" onClick={() => fileInputRef.current?.click()}>
               Import JSON
             </Button>
@@ -53,9 +58,12 @@ export function BatchHeader({
       </Card>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 p-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:hidden">
-        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2">
+        <div className="mx-auto grid max-w-6xl grid-cols-4 gap-2">
           <Button size="sm" variant="secondary" onClick={onExport}>
-            Export
+            JSON
+          </Button>
+          <Button size="sm" variant="secondary" onClick={onExportPdf}>
+            PDF
           </Button>
           <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
             Import
