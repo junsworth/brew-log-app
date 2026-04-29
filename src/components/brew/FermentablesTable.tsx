@@ -111,6 +111,7 @@ function FermentableEditDialog({
               value={catalogSelectValue(draft)}
               onValueChange={handleCatalogChange}
               groups={comboboxGroups}
+              customOption={{ value: JOLA_CUSTOM_PRODUCT_ID, label: "Custom" }}
               placeholder="Select malt…"
             />
           </div>
@@ -376,7 +377,12 @@ export function FermentablesTable({
         or choose Custom to enter manually. % bill is auto-calculated from kg amounts.
       </p>
       <div className="space-y-3">
-        {rows.map((row) => (
+        {rows.filter((r) => r.ingredient).length === 0 && (
+          <p className="py-3 text-center text-sm text-muted-foreground">
+            No grains added yet.
+          </p>
+        )}
+        {rows.filter((r) => r.ingredient).map((row) => (
           <FermentableCard
             key={row.id}
             row={row}
