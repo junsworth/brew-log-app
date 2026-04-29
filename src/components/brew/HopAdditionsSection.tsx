@@ -372,10 +372,6 @@ export function HopAdditionsSection({
 
   return (
     <div className="space-y-2">
-      <p className="text-[11px] text-muted-foreground sm:text-xs">
-        Hops come from your Jola supplier catalog. Choose a hop to auto-fill variety and alpha %,
-        or choose Custom to enter manually.
-      </p>
       <div className="space-y-3">
         {rows.filter((r) => r.variety).length === 0 && (
           <p className="py-3 text-center text-sm text-muted-foreground">

@@ -374,10 +374,6 @@ export function FermentablesTable({
 
   return (
     <div className="space-y-2">
-      <p className="text-[11px] text-muted-foreground sm:text-xs">
-        Grain bill uses your Jola supplier catalog. Pick a catalog malt to auto-fill EBC and type,
-        or choose Custom to enter manually. % bill is auto-calculated from kg amounts.
-      </p>
       <div className="space-y-3">
         {rows.filter((r) => r.ingredient).length === 0 && (
           <p className="py-3 text-center text-sm text-muted-foreground">

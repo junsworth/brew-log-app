@@ -358,10 +358,6 @@ export function YeastSection({
 
   return (
     <div className="space-y-2">
-      <p className="text-[11px] text-muted-foreground sm:text-xs">
-        Yeast list uses your Jola supplier catalog. Choose a strain to auto-fill brand, form, and
-        pack size, or choose Custom to enter manually.
-      </p>
       <div className="space-y-3">
         {rows.filter((r) => r.strainName).length === 0 && (
           <p className="py-3 text-center text-sm text-muted-foreground">
