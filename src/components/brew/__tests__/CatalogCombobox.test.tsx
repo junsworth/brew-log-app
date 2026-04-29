@@ -31,7 +31,7 @@ function setup({
   const result = render(
     <CatalogCombobox
       value={value}
-      onValueChange={onValueChange}
+      onValueChange={onValueChange as (value: string) => void}
       groups={groups}
       customOption={custom}
       placeholder="Select hop..."

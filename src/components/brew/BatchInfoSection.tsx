@@ -1,6 +1,7 @@
 "use client";
 
 import { bjcpStyleGroups, RECIPE_TYPES } from "@/constants/brewing";
+import { BJCPStyleGuide } from "@/components/brew/BJCPStyleGuide";
 import { CatalogCombobox } from "@/components/brew/CatalogCombobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,7 @@ export function BatchInfoSection({ data, onChange }: Props) {
     onChange({ ...data, [key]: value });
 
   return (
+    <>
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
       <div className="space-y-1.5">
         <Label>Recipe / Beer Name</Label>
@@ -88,5 +90,7 @@ export function BatchInfoSection({ data, onChange }: Props) {
         />
       </div>
     </div>
+    <BJCPStyleGuide style={data.style} />
+    </>
   );
 }
