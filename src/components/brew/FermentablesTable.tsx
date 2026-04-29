@@ -225,50 +225,52 @@ function FermentableCard({
 
   return (
     <>
-      <div className="flex items-center gap-3 rounded-lg border border-border px-3 py-3">
-        {/* Left: name + type */}
-        <div className="min-w-0 flex-1">
-          {row.ingredient ? (
-            <>
-              <p className="truncate text-base font-semibold leading-tight">{row.ingredient}</p>
-              {row.maltType && (
-                <p className="mt-0.5 truncate text-xs text-muted-foreground">{row.maltType}</p>
-              )}
-            </>
-          ) : (
-            <p className="text-base italic text-muted-foreground/60">No malt selected</p>
-          )}
-        </div>
-
-        {/* Right: stats stacked vertically */}
-        <div className="shrink-0 space-y-0.5 border-l border-border/50 pl-4 text-right">
-          <div className="flex items-center justify-end gap-2">
-            <span className="text-xs font-bold tracking-widest uppercase text-amber-600">kg</span>
-            <span className="text-sm font-semibold">
-              {row.amount !== "" && row.amount !== undefined ? String(row.amount) : "—"}
-            </span>
-          </div>
-          <div className="flex items-center justify-end gap-2">
-            <span className="text-xs font-bold tracking-widest uppercase text-blue-600/80">bill</span>
-            <span className="text-sm">
-              {row.percentOfBill !== "" && row.percentOfBill !== undefined ? `${row.percentOfBill}%` : "—"}
-            </span>
-          </div>
-          <div className="flex items-center justify-end gap-2">
-            <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">ebc</span>
-            {swatchColor && (
-              <span
-                className="h-3 w-3 shrink-0 rounded-full border border-border/40"
-                style={{ backgroundColor: swatchColor }}
-                aria-hidden="true"
-              />
+      <div className="overflow-hidden rounded-lg border border-border">
+        <div className="flex items-center gap-3 px-3 py-3">
+          {/* Left: name + type */}
+          <div className="min-w-0 flex-1">
+            {row.ingredient ? (
+              <>
+                <p className="truncate text-base font-semibold leading-tight">{row.ingredient}</p>
+                {row.maltType && (
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">{row.maltType}</p>
+                )}
+              </>
+            ) : (
+              <p className="text-base italic text-muted-foreground/60">No malt selected</p>
             )}
-            <span className="text-sm">{row.typicalEbc || "—"}</span>
+          </div>
+
+          {/* Right: stats stacked vertically */}
+          <div className="shrink-0 space-y-0.5 border-l border-border/50 pl-4 text-right">
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-xs font-bold tracking-widest uppercase text-amber-600">kg</span>
+              <span className="text-sm font-semibold">
+                {row.amount !== "" && row.amount !== undefined ? String(row.amount) : "—"}
+              </span>
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-xs font-bold tracking-widest uppercase text-blue-600/80">bill</span>
+              <span className="text-sm">
+                {row.percentOfBill !== "" && row.percentOfBill !== undefined ? `${row.percentOfBill}%` : "—"}
+              </span>
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">ebc</span>
+              {swatchColor && (
+                <span
+                  className="h-3 w-3 shrink-0 rounded-full border border-border/40"
+                  style={{ backgroundColor: swatchColor }}
+                  aria-hidden="true"
+                />
+              )}
+              <span className="text-sm">{row.typicalEbc || "—"}</span>
+            </div>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex shrink-0 items-center gap-1">
+        {/* Toolbar */}
+        <div className="flex justify-end gap-1 border-t border-border/60 bg-muted/40 px-2 py-1">
           <Button
             variant="ghost"
             size="icon-sm"

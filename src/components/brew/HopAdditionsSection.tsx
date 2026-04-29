@@ -268,43 +268,45 @@ function HopCard({
 
   return (
     <>
-      <div className="flex items-center gap-3 rounded-lg border border-border px-3 py-3">
-        {/* Left: variety + subtitle */}
-        <div className="min-w-0 flex-1">
-          {row.variety ? (
-            <>
-              <p className="truncate text-base font-semibold leading-tight">{row.variety}</p>
-              {subtitle && (
-                <p className="mt-0.5 truncate text-xs text-muted-foreground">{subtitle}</p>
-              )}
-            </>
-          ) : (
-            <p className="text-base italic text-muted-foreground/60">No hop selected</p>
-          )}
+      <div className="overflow-hidden rounded-lg border border-border">
+        <div className="flex items-center gap-3 px-3 py-3">
+          {/* Left: variety + subtitle */}
+          <div className="min-w-0 flex-1">
+            {row.variety ? (
+              <>
+                <p className="truncate text-base font-semibold leading-tight">{row.variety}</p>
+                {subtitle && (
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">{subtitle}</p>
+                )}
+              </>
+            ) : (
+              <p className="text-base italic text-muted-foreground/60">No hop selected</p>
+            )}
+          </div>
+
+          {/* Right: stats stacked vertically */}
+          <div className="shrink-0 space-y-0.5 border-l border-border/50 pl-4 text-right">
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-xs font-bold tracking-widest uppercase text-amber-600">g</span>
+              <span className="text-sm font-semibold">
+                {row.amount !== "" && row.amount !== undefined ? String(row.amount) : "—"}
+              </span>
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-xs font-bold tracking-widest uppercase text-blue-600/80">use</span>
+              <span className="text-sm">{row.use || "—"}</span>
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">min</span>
+              <span className="text-sm">
+                {row.time !== "" && row.time !== undefined ? String(row.time) : "—"}
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Right: stats stacked vertically */}
-        <div className="shrink-0 space-y-0.5 border-l border-border/50 pl-4 text-right">
-          <div className="flex items-center justify-end gap-2">
-            <span className="text-xs font-bold tracking-widest uppercase text-amber-600">g</span>
-            <span className="text-sm font-semibold">
-              {row.amount !== "" && row.amount !== undefined ? String(row.amount) : "—"}
-            </span>
-          </div>
-          <div className="flex items-center justify-end gap-2">
-            <span className="text-xs font-bold tracking-widest uppercase text-blue-600/80">use</span>
-            <span className="text-sm">{row.use || "—"}</span>
-          </div>
-          <div className="flex items-center justify-end gap-2">
-            <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">min</span>
-            <span className="text-sm">
-              {row.time !== "" && row.time !== undefined ? String(row.time) : "—"}
-            </span>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex shrink-0 items-center gap-1">
+        {/* Toolbar */}
+        <div className="flex justify-end gap-1 border-t border-border/60 bg-muted/40 px-2 py-1">
           <Button
             variant="ghost"
             size="icon-sm"
