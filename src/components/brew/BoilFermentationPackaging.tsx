@@ -660,6 +660,115 @@ export function FermentationSection({
   );
 }
 
+function PackagingEditDialog({
+  data,
+  open,
+  onOpenChange,
+  onSave,
+}: {
+  data: PackagingInfo;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSave: (updated: PackagingInfo) => void;
+}) {
+  const [draft, setDraft] = useState<PackagingInfo>(data);
+
+  const handleOpenChange = (next: boolean) => {
+    if (next) setDraft(data);
+    onOpenChange(next);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent showCloseButton={false}>
+        <DialogHeader>
+          <DialogTitle>Edit Packaging</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs" htmlFor="pkg-date">Packaging Date</Label>
+              <Input
+                id="pkg-date"
+                className="h-8 text-xs"
+                type="date"
+                value={draft.packagingDate}
+                onChange={(e) => setDraft((d) => ({ ...d, packagingDate: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs" htmlFor="pkg-method">Method</Label>
+              <Select
+                value={draft.method}
+                onValueChange={(v) => setDraft((d) => ({ ...d, method: v }))}
+              >
+                <SelectTrigger id="pkg-method" className="h-8 text-xs">
+                  <SelectValue placeholder="Select…" />
+                  <SelectContent>
+                    {PACKAGING_METHODS.map((m) => (
+                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectTrigger>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs" htmlFor="pkg-volume">Volume Packaged (L)</Label>
+              <Input
+                id="pkg-volume"
+                className="h-8 text-xs"
+                type="number"
+                placeholder="—"
+                value={draft.volumePackaged}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, volumePackaged: e.target.value === "" ? "" : Number(e.target.value) }))
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs" htmlFor="pkg-priming">Priming Sugar (g)</Label>
+              <Input
+                id="pkg-priming"
+                className="h-8 text-xs"
+                type="number"
+                placeholder="—"
+                value={draft.primingSugar}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, primingSugar: e.target.value === "" ? "" : Number(e.target.value) }))
+                }
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-xs" htmlFor="pkg-ready">Ready to Drink</Label>
+            <Input
+              id="pkg-ready"
+              className="h-8 text-xs"
+              type="date"
+              value={draft.readyTodrinkDate}
+              onChange={(e) => setDraft((d) => ({ ...d, readyTodrinkDate: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button size="sm" onClick={() => { onSave(draft); onOpenChange(false); }}>
+            Save
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function PackagingSection({
   data,
   onChange,
@@ -667,50 +776,56 @@ export function PackagingSection({
   data: PackagingInfo;
   onChange: (next: PackagingInfo) => void;
 }) {
-  const set = <K extends keyof PackagingInfo>(key: K, value: PackagingInfo[K]) =>
-    onChange({ ...data, [key]: value });
+  const [editOpen, setEditOpen] = useState(false);
+
+  const fmt = (val: number | string, suffix = "") =>
+    val !== "" && val !== undefined ? `${val}${suffix}` : "—";
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-5">
-      <div className="space-y-1.5">
-        <Label>Packaging Date</Label>
-        <Input type="date" value={data.packagingDate} onChange={(e) => set("packagingDate", e.target.value)} />
+    <>
+      <div className="overflow-hidden rounded-lg border border-border">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-3 px-3 py-3 sm:grid-cols-3">
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-amber-600">packaged</p>
+            <p className="text-sm font-semibold">{data.packagingDate || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-blue-600/80">method</p>
+            <p className="text-sm">{data.method || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-amber-600">volume</p>
+            <p className="text-sm font-semibold">{fmt(data.volumePackaged, " L")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground">priming</p>
+            <p className="text-sm">{fmt(data.primingSugar, " g")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground">ready</p>
+            <p className="text-sm">{data.readyTodrinkDate || "—"}</p>
+          </div>
+        </div>
+        <div className="flex justify-end gap-1 border-t border-border/60 bg-muted/40 px-2 py-1">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-foreground"
+            aria-label="Edit packaging"
+            title="Edit packaging"
+            onClick={() => setEditOpen(true)}
+          >
+            <Pencil className="h-3 w-3" />
+          </Button>
+        </div>
       </div>
-      <div className="space-y-1.5">
-        <Label>Method</Label>
-        <Select value={data.method} onValueChange={(v) => set("method", v as PackagingInfo["method"])}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select..." />
-            <SelectContent>
-              {PACKAGING_METHODS.map((method) => (
-                <SelectItem key={method} value={method}>
-                  {method}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectTrigger>
-        </Select>
-      </div>
-      <div className="space-y-1.5">
-        <Label>Volume Packaged (L)</Label>
-        <Input
-          type="number"
-          value={data.volumePackaged}
-          onChange={(e) => set("volumePackaged", e.target.value === "" ? "" : Number(e.target.value))}
-        />
-      </div>
-      <div className="space-y-1.5">
-        <Label>Priming Sugar (g)</Label>
-        <Input
-          type="number"
-          value={data.primingSugar}
-          onChange={(e) => set("primingSugar", e.target.value === "" ? "" : Number(e.target.value))}
-        />
-      </div>
-      <div className="space-y-1.5">
-        <Label>Ready to Drink</Label>
-        <Input type="date" value={data.readyTodrinkDate} onChange={(e) => set("readyTodrinkDate", e.target.value)} />
-      </div>
-    </div>
+
+      <PackagingEditDialog
+        data={data}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        onSave={onChange}
+      />
+    </>
   );
 }
